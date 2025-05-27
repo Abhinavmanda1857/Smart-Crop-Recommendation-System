@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AgriVision: Smart Farming</title>
+  <link rel="stylesheet" href="minor_style.css" />
+  <style>
+    .hidden { display: none; }
+    .active-section { display: block; }
+    section { padding: 40px 20px; }
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.6); justify-content: center; align-items: center; z-index: 10;
+    }
+    .modal-content {
+      background: #fff; padding: 30px; border-radius: 15px; width: 350px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3); text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    .modal-content h3 {
+      margin-bottom: 20px;
+      color: #2e7d32;
+    }
+    .modal-content input {
+      width: 90%; padding: 10px; margin: 8px 0;
+      border: 1px solid #ccc; border-radius: 8px;
+    }
+    .modal-content button {
+      background: #4caf50; color: white;
+      padding: 10px 20px; border: none; border-radius: 8px;
+      cursor: pointer; font-weight: bold;
+      transition: background 0.3s;
+    }
+    .modal-content button:hover {
+      background: #388e3c;
+    }
+    .modal-content a {
+      color: #1b5e20; text-decoration: underline;
+      font-size: 0.9em;
+    }
+
+    section h2 { color: #2e7d32; }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    .black-box {
+      background-color: #111;
+      color: #f1f1f1;
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      line-height: 1.6;
+      font-size: 1.1em;
+      display: none;
+      transition: opacity 0.3s ease-in-out;
+    }
+    .hero h2 { color: white; }
+    .login-footer { text-align: center; margin-top: 15px; }
+    .login-footer a {
+      color: #4caf50;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="logo">🌿 AgriVision 🌱</h1>
+    <nav>
+      <ul>
+        <li><a href="#" onclick="showSection('hero')">Home</a></li>
+        <li><a href="#" onclick="showSection('about')">About Us</a></li>
+        <li><a href="#" onclick="showSection('services')">Services</a></li>
+        <li><a href="#" onclick="showSection('contact')">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero active-section" id="hero">
+    <div class="content">
+      <h2>Transforming Agriculture with AI</h2>
+      <p>Accurate crop yield predictions and optimized irrigation for smarter farming.</p>
+      <div class="spacer"></div>
+      <button id="openLogin">🚜 Get Started</button>
+    </div>
+  </section>
+
+  <section class="black-box" id="about">
+    <h2>About Us</h2>
+    <p>AgriVision is a forward-thinking platform developed by students passionate about using AI for climate-resilient agriculture.</p>
+    <p>We aim to empower farmers and agricultural stakeholders with precise, data-driven tools that help manage resources, reduce risk, and improve crop yields.</p>
+    <p>Our mission is to bridge the gap between cutting-edge technology and grassroots farming through education, accessibility, and innovation.</p>
+  </section>
+
+  <section class="black-box" id="services">
+    <h2>Our Services</h2>
+    <ul>
+      <li>🌱 AI-powered crop recommendation based on real-time soil and weather data.</li>
+      <li>💧 Smart irrigation scheduling to conserve water and boost productivity.</li>
+      <li>🧪 Soil health analysis for sustainable nutrient management.</li>
+      <li>📈 Predictive analytics for pest outbreaks and climate risk management.</li>
+    </ul>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="black-box" id="contact">
+    <h2>Contact Us</h2>
+    <p><strong>Email:</strong> info@agrivision.ai</p>
+    <p><strong>Phone:</strong> +91 98765 43210</p>
+    <p><strong>Location:</strong> GreenTech Incubator, AgriTech University Campus</p>
+    <p>Follow us on social media for updates, success stories, and news in sustainable agriculture.</p>
+  </section>
+
+  <!-- Form Section -->
+  <section class="form-section hidden" id="formSection">
+    <div class="form-container">
+      <h2>🌾 Enter Agricultural Data</h2>
+      <form id="agricultureForm">
+        <input type="number" name="nitrogen" placeholder="Nitrogen" required />
+        <input type="number" name="phosphorus" placeholder="Phosphorus" required />
+        <input type="number" name="potassium" placeholder="Potassium" required />
+        <input type="number" step="0.1" name="temperature" placeholder="Temperature" required />
+        <input type="number" step="0.1" name="humidity" placeholder="Humidity" required />
+        <input type="number" step="0.1" name="ph" placeholder="pH" required />
+        <input type="number" step="0.1" name="rainfall" placeholder="Rainfall" required />
+        <input type="text" id="crop" name="crop" placeholder="e.g., Rice" required />
+
+        <button type="submit">Predict yield</button>
+        <button type="button" id="recommendBtn">🌾 Recommend Best Crop</button>
+
+        <div id="result" style="margin-top: 15px; font-weight: bold; color: green;"></div>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    function showSection(id) {
+      const contentBoxes = ['about', 'services', 'contact'];
+      contentBoxes.forEach(sec => {
+        const box = document.getElementById(sec);
+        box.style.display = "none";
+        box.classList.remove("fade-in");
+      });
+      if (id !== 'hero') {
+        const target = document.getElementById(id);
+        target.style.display = "block";
+        setTimeout(() => target.classList.add("fade-in"), 10);
+      }
+    }
+
+    document.getElementById("openLogin").addEventListener("click", () => {
+      const form = document.getElementById("formSection");
+      form.classList.remove("hidden");
+      form.style.display = "block";
+      form.scrollIntoView({ behavior: "smooth" });
+    });
+  </script>
+
+  <script src="minor_script.js"></script>
+</body>
+</html>
